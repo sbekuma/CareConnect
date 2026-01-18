@@ -1,0 +1,10 @@
+# Ignore the environment file in the backend folder
+backend/.env
+
+# Ignore dependency folders
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Ignore Mac system files
+.DS_Store
