@@ -1,0 +1,306 @@
+/* General layout (unchanged) */
+.appointment-container {
+    max-width: 700px;
+    margin: auto;
+    padding: 2rem;
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    border-radius: 8px;
+  }
+
+  .appointment-title {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    color: #333;
+  }
+
+  .appointment-form label {
+    display: block;
+    margin-top: 1.2rem;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .appointment-form select,
+  .appointment-form textarea {
+    width: 100%;
+    margin-top: 0.3rem;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+
+  .appointment-form button {
+    margin-top: 1.5rem;
+    padding: 0.8rem 1.2rem;
+    font-size: 1rem;
+    background-color: #2b7cff;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .appointment-form button:hover {
+    background-color: #1a5fd1;
+  }
+
+  /* Calendar styles (unchanged) */
+  .calendar-container {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-top: 1rem;
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 6px;
+  }
+
+  .calendar-navigation {
+    grid-column: span 7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .calendar-header {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2c3e50;
+  }
+
+  .calendar-weekday {
+    text-align: center;
+    font-weight: bold;
+    color: #555;
+  }
+
+  .calendar-day {
+    text-align: center;
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border: 1px solid #e0e0e0;
+  }
+
+  .calendar-day:hover {
+    background-color: #e6f0ff;
+  }
+
+  .calendar-day.selected {
+    background-color: #2b7cff;
+    color: #ffffff;
+    font-weight: bold;
+  }
+
+  .calendar-day.empty {
+    background-color: transparent;
+    border: none;
+    cursor: default;
+  }
+
+/* Styles for the navigation buttons within .calendar-navigation (unchanged) */
+.calendar-navigation button {
+    /* Original button colors */
+    background-color: #2b7cff; /* Keep the original blue color */
+    color: #fff; /* Keep white text */
+
+    /* Reduced padding for a smaller button size */
+    padding: 0.3rem 0.6rem;
+    /* Slightly smaller font size for the button text */
+    font-size: 0.9rem;
+
+    border: none;
+    border-radius: 6px; /* Keep original border-radius */
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+    font-weight: bold;
+}
+
+.calendar-navigation button:hover {
+    background-color: #1a5fd1; /* Keep the original hover color */
+    transform: translateY(-1px); /* Keep subtle lift effect */
+}
+
+.calendar-navigation button:active {
+    background-color: #1a5fd1; /* Use the same hover color for active, or you can define a slightly darker one */
+    transform: translateY(0); /* Reset lift on click */
+}
+
+/* Optional: To make the calendar header (month/year) take up the central space (unchanged) */
+.calendar-navigation .calendar-header {
+    flex-grow: 1; /* Allows the header to take up available space */
+    text-align: center; /* Center the month/year text */
+}
+.calendar-navigation button {
+    background-color: transparent;
+    color: #2b7cff;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding: 0;
+}
+
+/* Doctor Info Section */
+.doctor-info {
+    display: flex;
+    flex-direction: column; /* Keeps the profile and description stacked */
+    background-color: #f9f9f9;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .doctor-profile {
+    display: flex;
+    gap: 20px; /* Increased gap for better separation */
+    align-items: flex-start; /* Align items to the start of the cross axis (top) */
+    /* To ensure the text next to the image starts from the far left */
+    width: 100%; /* Ensure it takes full width to properly align children */
+  }
+
+  .doctor-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #c1cada;
+    flex-shrink: 0; /* Prevent the image from shrinking */
+  }
+
+  .doctor-details {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    justify-content: flex-start; /* Align content to the top */
+    flex: 1; /* Allow it to take available space */
+    text-align: left; /* Ensure all text within doctor-details aligns left */
+  }
+
+  .doctor-name {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #2b7cff;
+    font-weight: 600;
+    text-align: left; /* Explicitly align name to the left */
+  }
+
+  .doctor-details-row { /* Container for specialty, rating, experience */
+    display: flex;
+    flex-direction: column; /* Stack these details vertically */
+    align-items: flex-start; /* Crucially, align items to the left */
+    margin-top: 6px; /* Small space below the name */
+  }
+
+  .doctor-specialty,
+  .doctor-rating,
+  .doctor-experience {
+    margin: 0; /* Remove default margins to control spacing with parent flex container */
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.4; /* Adjust line height for better readability */
+    text-align: left; /* Ensure these texts are aligned left */
+  }
+
+  .doctor-rating .stars {
+    color: #f39c12;
+    margin-right: 10px;
+  }
+
+  .doctor-description {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: #333;
+    line-height: 1.5; /* Increased line height for readability */
+    text-align: left; /* Align description text to the left */
+  }
+
+  .calendar-day.disabled {
+    color: #ccc;
+    pointer-events: none;
+    background-color: #f0f0f0;
+  }
+  /* Message box container */
+.message-box {
+  margin-top: 20px;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 16px;
+  width: 100%;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  animation: fadeInSlide 0.3s ease-in-out;
+}
+
+/* Success styling */
+.message-box.success {
+  background-color: #e6f4ea;
+  color: #256029;
+  border: 1px solid #b7e0c2;
+}
+
+/* Error styling */
+.message-box.error {
+  background-color: #fdecea;
+  color: #a94442;
+  border: 1px solid #f5c6cb;
+}
+
+/* Optional fade/slide animation */
+@keyframes fadeInSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Loader wrapper */
+.loader-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 0;
+  color: #333;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* Spinner */
+.spinner {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 15px;
+  border: 6px solid #eee;
+  border-top: 6px solid #4CAF50; /* Green spinner top */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Spin animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
