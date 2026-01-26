@@ -1,62 +1,130 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { ENDPOINTS } from "../../apiConfig"; // Removed unused API_BASE_URL
 import "./ShowAppointments.css";
 
-// ===================== Add task 26 imports here =====================
-
-export default function ShowAppointments() {
+const ShowAppointments = () => {
   const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("All");
   const navigate = useNavigate();
-  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    if (!userId) {
-      navigate("/login");
-      return;
-    }
+    const fetchAppointments = async () => {
+      const userId = localStorage.getItem("userId");
+      if (!userId) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const res = await axios.get(ENDPOINTS.APPOINTMENTS(userId));
+        setAppointments(res.data);
+      } catch (err) {
+        console.error("Error fetching appointments:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAppointments();
+  }, []);
 
-    axios
-      .get(`http://localhost:3000/appointments/user/${userId}`)
-      .then((res) => setAppointments(res.data))
-      .catch((err) => console.error("Error fetching appointments:", err));
-  }, [userId, navigate]);
+  const filteredAppointments = appointments.filter((app) => {
+    if (filter === "All") return true;
+    return app.appointment_type?.toLowerCase() === filter.toLowerCase();
+  });
 
-  const handleDelete = (appointmentId) => {
-    if (!window.confirm("Are you sure you want to delete this appointment?")) return;
-
-    axios
-      .delete(`http://localhost:3000/appointments/${appointmentId}`)
-      .then(() => {
-        setAppointments((prev) => prev.filter((appt) => appt.id !== appointmentId));
-      })
-      .catch((err) => {
-        console.error("Failed to delete appointment:", err);
-        alert("Deletion failed");
-      });
-  };
+  if (loading) return <div className="loader-container"><div className="loader"></div></div>;
 
   return (
-    <div className="appointments-container">
-      <h1>Your Appointments</h1>
-      {appointments.length === 0 ? (
-        <p>No appointments found.</p>
-      ) : (
-        <ul className="appointments-list">
-          {appointments.map((appt) => (
-            <li key={appt.id} className="appointment-card">
-              <div>
-                <p><strong>Doctor:</strong> {appt.doctor_name}</p>
-                <p><strong>Date:</strong> {new Date(appt.appointment_date).toLocaleDateString()}</p>
-                <p><strong>Time:</strong> {appt.start_time?.slice(0, 5)}</p>
-                <p><strong>Type:</strong> {appt.appointment_type}</p>
-                <p><strong>Notes:</strong> {appt.notes}</p>
+    <div className="appointments-page">
+      <div className="appointments-container">
+        <header className="page-header">
+          <div className="header-text">
+            <h1>My Appointments</h1>
+            <p>Track and manage your upcoming consultations.</p>
+          </div>
+          <div className="filter-group">
+            {["All", "Online", "Clinic"].map((type) => (
+              <button 
+                key={type}
+                className={`filter-btn ${filter === type ? "active" : ""}`}
+                onClick={() => setFilter(type)}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+        </header>
+
+        {appointments.length === 0 ? (
+          <div className="empty-appointments">
+            <div className="empty-icon">📅</div>
+            <h3>No appointments found</h3>
+            <button className="book-now-empty" onClick={() => navigate("/")}>
+              Book an Appointment
+            </button>
+          </div>
+        ) : (
+          <div className="appointments-list">
+            {filteredAppointments.map((app) => (
+              <div className="appointment-card" key={app.id}>
+                <div className="app-main-info">
+                  <div className="doctor-mini-profile">
+                    <img 
+                      src={app.doctor_image || "/img/logo.png"} 
+                      alt={app.doctor_name} 
+                      className="mini-doc-img"
+                    />
+                    <div className="mini-doc-details">
+                      <h4>{app.doctor_name}</h4>
+                      <span className="app-type-badge">{app.appointment_type}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="app-schedule">
+                    <div className="schedule-item">
+                      <span className="s-icon">📅</span>
+                      <div className="s-text">
+                        <label>Date</label>
+                        <p>{new Date(app.appointment_date).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                    <div className="schedule-item">
+                      <span className="s-icon">⏰</span>
+                      <div className="s-text">
+                        <label>Time</label>
+                        <p>{app.start_time}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="app-patient-details">
+                  <div className="p-info-item">
+                    <label>Reference</label>
+                    <p>#{app.id}</p>
+                  </div>
+                  <div className="p-info-item">
+                    <label>Status</label>
+                    <span className="status-pill confirmed">Confirmed</span>
+                  </div>
+                  <div className="app-actions">
+                    <button 
+                      className="view-receipt-btn"
+                      onClick={() => navigate(`/doctor/${app.doctor_id}`)}
+                    >
+                      View Doctor
+                    </button>
+                  </div>
+                </div>
               </div>
-              <button className="delete-btn" onClick={() => handleDelete(appt.id)}>Delete</button>
-            </li>
-          ))}
-        </ul>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
-}
+};
+
+export default ShowAppointments;

@@ -1,105 +1,101 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import './DoctorDetails.css';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { Star, Clock, User, DollarSign, MapPin, ChevronLeft } from "lucide-react";
+import { API_BASE_URL } from "../../apiConfig";
+import "./DoctorDetails.css";
 
-function DoctorDetails() {
+const DoctorDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchDoctorDetails = async () => {
+    const fetchDoctor = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/doctors/${id}`);
+        const res = await axios.get(`${API_BASE_URL}/doctors/${id}`);
         setDoctor(res.data);
       } catch (err) {
-        console.error('Failed to fetch doctor details:', err);
+        console.error("Error fetching doctor:", err);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchDoctorDetails();
+    fetchDoctor();
   }, [id]);
 
-  const handleBookAppointment = () => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    if (isLoggedIn) {
-      navigate(`/book-appointment/${id}`);
-    } else {
-      navigate('/login');
-    }
-  };
-
-  const handleGoBack = () => {
-    navigate(-1);
-  };
-
-  if (loading) {
-    return <div className="doctor-details-container"><p>Loading doctor details...</p></div>;
-  }
-
-  if (!doctor) {
-    return <div className="doctor-details-container"><p>Doctor not found</p></div>;
-  }
+  if (loading) return <div className="loading-state">Loading specialist profile...</div>;
+  if (!doctor) return <div className="error-state">Doctor not found</div>;
 
   return (
-    <div className="doctor-details">
+    <div className="details-wrapper">
+      <button className="back-btn" onClick={() => navigate(-1)}>
+        <ChevronLeft size={20} /> Back to Search
+      </button>
+
       <div className="details-container">
-        <div className="doctor-header-section">
-          <div className="doctor-image-box">
-            <img src={doctor.image_url} alt={doctor.name} className="doctor-image" />
+        <aside className="profile-sidebar">
+          <div className="profile-img-container">
+            <img src={doctor.image_url} alt={doctor.name} className="profile-img" />
+            <div className="rating-tag">
+              <Star size={16} fill="currentColor" /> {doctor.rating || "4.9"}
+            </div>
           </div>
           
-          <div className="doctor-info-section">
-            <h1 className="doctor-full-name">{doctor.name}</h1>
-            <p className="doctor-bio">{doctor.bio}</p>
-            
-            <div className="specialties-container">
-              <h3>Specialties</h3>
-              <div className="specialties-list">
-                {doctor.specialties && doctor.specialties.split(',').map((spec, idx) => (
-                  <span key={idx} className="specialty-badge">{spec.trim()}</span>
-                ))}
+          <button className="primary-book-btn" onClick={() => navigate(`/book-appointment/${doctor.id}`)}>
+            Book Appointment Now
+          </button>
+        </aside>
+
+        <main className="profile-main">
+          <header className="profile-header">
+            <h1 className="profile-name">{doctor.name}</h1>
+            <p className="profile-specialty">{doctor.specialties}</p>
+          </header>
+
+          <section className="profile-stats">
+            <div className="stat-card">
+              <Clock className="stat-icon" />
+              <div>
+                <h4>Experience</h4>
+                <p>{doctor.exp} Years</p>
               </div>
             </div>
-
-            <div className="stats-grid">
-              <div className="stat-box">
-                <div className="stat-label">Experience</div>
-                <div className="stat-value">{doctor.exp} years</div>
-              </div>
-              <div className="stat-box">
-                <div className="stat-label">Patients</div>
-                <div className="stat-value">{doctor.total_patients}</div>
+            <div className="stat-card">
+              <User className="stat-icon" />
+              <div>
+                <h4>Patients</h4>
+                <p>{doctor.total_patients}+</p>
               </div>
             </div>
-          </div>
-        </div>
+          </section>
 
-        <div className="pricing-section">
-          <h3>Consultation Fees</h3>
-          <div className="pricing-grid">
-            <div className="price-card online">
-              <div className="price-type">💻 Online Consultation</div>
-              <div className="price-value">PKR {parseFloat(doctor.online_fee).toFixed(0)}</div>
-            </div>
-            <div className="price-card clinic">
-              <div className="price-type">🏥 Clinic Visit</div>
-              <div className="price-value">PKR {parseFloat(doctor.visit_fee).toFixed(0)}</div>
-            </div>
-          </div>
-        </div>
+          <section className="profile-bio">
+            <h3>Biography</h3>
+            <p>{doctor.bio}</p>
+          </section>
 
-        <div className="action-buttons">
-          <button className="btn-book" onClick={handleBookAppointment}>Book Appointment</button>
-          <button className="btn-back" onClick={handleGoBack}>Go Back</button>
-        </div>
+          <section className="fees-grid">
+            <div className="fee-card">
+              <div className="fee-header">
+                <DollarSign size={18} />
+                <span>Online Consultation</span>
+              </div>
+              <p className="fee-amount">${doctor.online_fee}</p>
+            </div>
+            <div className="fee-card">
+              <div className="fee-header">
+                <MapPin size={18} />
+                <span>Clinic Visit</span>
+              </div>
+              <p className="fee-amount">${doctor.visit_fee}</p>
+            </div>
+          </section>
+        </main>
       </div>
     </div>
   );
-}
+};
 
 export default DoctorDetails;

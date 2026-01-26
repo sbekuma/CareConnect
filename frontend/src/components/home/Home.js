@@ -1,7 +1,10 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Search, MapPin, Star, ChevronRight } from "lucide-react";
+import { API_BASE_URL } from "../../apiConfig";
 import "./Home.css";
+import Chatbot from "../chatbot/Chatbot";
 
 const LIMIT = 10;
 
@@ -15,7 +18,7 @@ const Home = () => {
 
   const fetchDoctors = async (pageNum, search = "") => {
     try {
-      const res = await axios.get("http://localhost:3000/doctors", {
+      const res = await axios.get(`${API_BASE_URL}/doctors`, {
         params: {
           page: pageNum,
           limit: LIMIT,
@@ -24,13 +27,11 @@ const Home = () => {
       });
 
       const newDocs = res.data;
-
       if (pageNum === 1) {
         setDoctors(newDocs);
       } else {
         setDoctors((prev) => [...prev, ...newDocs]);
       }
-
       if (newDocs.length < LIMIT) setHasMore(false);
     } catch (err) {
       console.error("Failed to fetch doctors:", err);
@@ -62,138 +63,100 @@ const Home = () => {
     setDoctors([]);
   };
 
-  const handleCardClick = (id) => navigate(`/doctor/${id}`);
-
   const handleBookAppointment = (id) => {
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     navigate(isLoggedIn ? `/book-appointment/${id}` : "/login");
   };
 
   return (
-    <div className="home-page">
-      {/* Hero Banner */}
-      <section className="hero-banner">
-        <div className="hero-overlay"></div>
-        <div className="hero-wrapper">
-          <div className="hero-text">
-            <h1 className="hero-title">Healthcare at Your Fingertips</h1>
-            <p className="hero-subtitle">Connect with verified doctors for online consultations and clinic visits</p>
+    <div className="home-wrapper">
+      <section className="hero-section">
+        <div className="hero-content">
+          <h1 className="hero-title">
+            Find Your Best <br />
+            <span className="gradient-text">Medical Expert</span>
+          </h1>
+          
+          <div className="search-container">
+            <div className="search-box">
+              <div className="search-input-group">
+                <Search size={20} className="search-icon" />
+                <input 
+                  type="text" 
+                  placeholder="Doctor name..."
+                  className="search-input"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                />
+              </div>
+              <div className="search-divider"></div>
+              <div className="location-group">
+                <MapPin size={20} className="location-icon" />
+                <span className="location-text">New York, USA</span>
+              </div>
+              <button className="search-button">Search</button>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Search Section */}
-      <section className="search-container">
-        <div className="search-wrapper">
-          <div className="search-box">
-            <svg className="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.35-4.35"></path>
-            </svg>
-            <input
-              type="text"
-              placeholder="Search doctors by name or specialty..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className="search-input"
-            />
+      <main className="doctors-grid-section">
+        {doctors.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-icon">🩺</div>
+            <h3>No specialists found</h3>
+            <p>Try adjusting your search to find more options.</p>
           </div>
-        </div>
-      </section>
-
-      {/* Doctors Grid */}
-      <section className="doctors-section">
-        <div className="doctors-container">
-          {doctors.length === 0 && searchQuery ? (
-            <div className="no-results">
-              <p>No doctors found matching "{searchQuery}"</p>
-            </div>
-          ) : doctors.length === 0 ? (
-            <div className="loading-state">
-              <p>Loading doctors...</p>
-            </div>
-          ) : (
-            <div className="doctors-grid">
-              {doctors.map((doc, idx) => (
-                <div
-                  className="doctor-card"
-                  key={doc.id}
-                  ref={idx === doctors.length - 1 ? lastDoctorRef : null}
-                >
-                  <div className="card-header">
-                    <div className="doctor-avatar">
-                      <img src={doc.image_url} alt={doc.name} />
-                    </div>
-                    <div className="doctor-badge">⭐ {doc.exp}y</div>
-                  </div>
-
-                  <div className="card-body">
-                    <h3 className="doctor-name">{doc.name}</h3>
-                    <p className="doctor-specialty">{doc.bio}</p>
-                    <div className="specialties-tags">
-                      {doc.specialties && doc.specialties.split(",").map((spec, i) => (
-                        <span key={i} className="specialty-tag">{spec.trim()}</span>
-                      ))}
-                    </div>
-
-                    <div className="doctor-stats">
-                      <div className="stat">
-                        <span className="stat-label">Experience</span>
-                        <span className="stat-value">{doc.exp} years</span>
-                      </div>
-                      <div className="stat">
-                        <span className="stat-label">Patients</span>
-                        <span className="stat-value">{doc.total_patients}</span>
-                      </div>
-                    </div>
-
-                    <div className="pricing-boxes">
-                      <div className="price-box">
-                        <div className="price-icon">💻</div>
-                        <div className="price-info">
-                          <div className="price-label">Online</div>
-                          <div className="price-amount">${doc.online_fee}</div>
-                        </div>
-                      </div>
-                      <div className="price-box">
-                        <div className="price-icon">🏥</div>
-                        <div className="price-info">
-                          <div className="price-label">Clinic</div>
-                          <div className="price-amount">${doc.visit_fee}</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="card-footer">
-                    <button
-                      className="btn-secondary"
-                      onClick={() => handleCardClick(doc.id)}
-                    >
-                      View Details
-                    </button>
-                    <button
-                      className="btn-primary"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleBookAppointment(doc.id);
-                      }}
-                    >
-                      Book Now
-                    </button>
+        ) : (
+          <div className="doctors-grid">
+            {doctors.map((doctor, idx) => (
+              <div 
+                className="doctor-card" 
+                key={doctor.id}
+                ref={idx === doctors.length - 1 ? lastDoctorRef : null}
+              >
+                <div className="card-image-section">
+                  <img src={doctor.image_url} alt={doctor.name} className="doctor-image" />
+                  <div className="rating-badge">
+                    <Star size={14} className="star-icon" />
+                    <span>{doctor.rating || "4.8"}</span>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
 
-      {!hasMore && doctors.length > 0 && (
-        <div className="end-message">
-          <p>✓ All doctors loaded</p>
-        </div>
-      )}
+                <div className="card-content">
+                  <h3 className="doctor-name">{doctor.name}</h3>
+                  <p className="doctor-specialty">{doctor.specialties?.split(',')[0]}</p>
+                  <div className="doctor-experience">
+                    <span>⏱️</span>
+                    <span>{doctor.exp} Years Exp.</span>
+                  </div>
+                </div>
+
+                <p className="doctor-bio">{doctor.bio}</p>
+
+                <div className="pricing-grid">
+                  <div className="price-item">
+                    <span className="price-label">Online</span>
+                    <p className="price-amount">${doctor.online_fee}</p>
+                  </div>
+                  <div className="price-item">
+                    <span className="price-label">Clinic</span>
+                    <p className="price-amount">${doctor.visit_fee}</p>
+                  </div>
+                </div>
+
+                <div className="card-actions">
+                  <button className="btn-book-now" onClick={() => handleBookAppointment(doctor.id)}>Book Now</button>
+                  <button className="btn-details-icon" onClick={() => navigate(`/doctor/${doctor.id}`)}>
+                    <ChevronRight size={20} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </main>
+      <Chatbot />
     </div>
   );
 };

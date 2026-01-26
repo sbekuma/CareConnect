@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { IoChatbubbleEllipsesSharp, IoSend } from 'react-icons/io5';
+import axios from 'axios';
+import { ENDPOINTS } from "../../apiConfig";
 import './Chatbot.css';
-import axios from 'axios'; // Ensure axios is imported
 
 function Chatbot() {
     const [isOpen, setIsOpen] = useState(false);
@@ -30,39 +31,30 @@ function Chatbot() {
         setInput('');
         setIsLoading(true);
 
-        // Capture the input message here, as `input` will be cleared before the async call
         const currentInputMessage = input;
-        const userId = localStorage.getItem("userId"); // Get user ID for context tracking
+        const userId = localStorage.getItem("userId"); 
 
         try {
-            // Prepare chat history for the backend
-            // Note: Your backend doesn't seem to use chatHistory for RAG context,
-            // but if it did, you'd send it like this.
+            // Prepare chat history for the backend logic if needed
             const chatHistoryForLLM = messages.map(msg => ({
-                type: msg.type,
+                role: msg.type === 'user' ? 'user' : 'bot',
                 text: msg.text
             }));
 
-            // --- CORRECTED AXIOS CALL ---
-            const response = await axios.post('http://localhost:3000/chat', {
-                // Axios automatically sets Content-Type: application/json
-                // and stringifies the data if it's an object.
-                message: currentInputMessage, // Pass the message directly as part of the data object
-                userId: userId, // Send user ID for conversation context tracking
-                chatHistory: chatHistoryForLLM // If your backend expects chat history
+            // Use the centralized ENDPOINT instead of localhost
+            const response = await axios.post(ENDPOINTS.CHAT, {
+                message: currentInputMessage, 
+                userId: userId, 
+                chatHistory: chatHistoryForLLM 
             });
-            // --- END CORRECTED AXIOS CALL ---
 
-            // Axios responses are already parsed into .data
-            const data = response.data; // Axios response object has a .data property
-
+            const data = response.data;
             setMessages((prevMessages) => [...prevMessages, { type: 'bot', text: data.reply }]);
         } catch (error) {
             console.error('Error sending message:', error);
-            // More specific error message if backend returns one
             const errorMessage = error.response && error.response.data && error.response.data.error
                                  ? error.response.data.error
-                                 : 'Sorry, something went wrong. Please try again.';
+                                 : 'Sorry, I am having trouble connecting to the service right now.';
             setMessages((prevMessages) => [...prevMessages, { type: 'bot', text: errorMessage }]);
         } finally {
             setIsLoading(false);
@@ -84,13 +76,13 @@ function Chatbot() {
             {isOpen && (
                 <div className="chatbot-window">
                     <div className="chatbot-header">
-                        <h3>Virtual Assistant</h3>
+                        <h3>CareConnect Assistant</h3>
                         <button className="close-button" onClick={toggleChatbot}>X</button>
                     </div>
                     <div className="chatbot-messages">
                         {messages.length === 0 && (
                             <div className="welcome-message">
-                                <p>Hi there! How can I help you today?</p>
+                                <p>Hi there! I'm your CareConnect AI. How can I help you with your appointments today?</p>
                             </div>
                         )}
                         {messages.map((msg, index) => (

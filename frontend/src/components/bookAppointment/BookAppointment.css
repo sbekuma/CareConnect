@@ -1,306 +1,169 @@
-/* General layout (unchanged) */
-.appointment-container {
-    max-width: 700px;
-    margin: auto;
-    padding: 2rem;
-    font-family: Arial, sans-serif;
-    background-color: #fff;
-    box-shadow: 0 0 12px rgba(0,0,0,0.1);
-    border-radius: 8px;
-  }
-
-  .appointment-title {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    font-size: 2rem;
-    color: #333;
-  }
-
-  .appointment-form label {
-    display: block;
-    margin-top: 1.2rem;
-    font-weight: bold;
-    color: #333;
-  }
-
-  .appointment-form select,
-  .appointment-form textarea {
-    width: 100%;
-    margin-top: 0.3rem;
-    padding: 0.6rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
-  }
-
-  .appointment-form button {
-    margin-top: 1.5rem;
-    padding: 0.8rem 1.2rem;
-    font-size: 1rem;
-    background-color: #2b7cff;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-  }
-
-  .appointment-form button:hover {
-    background-color: #1a5fd1;
-  }
-
-  /* Calendar styles (unchanged) */
-  .calendar-container {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
-    margin-top: 1rem;
-    background-color: #f8f9fa;
-    padding: 10px;
-    border-radius: 6px;
-  }
-
-  .calendar-navigation {
-    grid-column: span 7;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-  }
-
-  .calendar-header {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #2c3e50;
-  }
-
-  .calendar-weekday {
-    text-align: center;
-    font-weight: bold;
-    color: #555;
-  }
-
-  .calendar-day {
-    text-align: center;
-    padding: 10px;
-    background-color: #ffffff;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    border: 1px solid #e0e0e0;
-  }
-
-  .calendar-day:hover {
-    background-color: #e6f0ff;
-  }
-
-  .calendar-day.selected {
-    background-color: #2b7cff;
-    color: #ffffff;
-    font-weight: bold;
-  }
-
-  .calendar-day.empty {
-    background-color: transparent;
-    border: none;
-    cursor: default;
-  }
-
-/* Styles for the navigation buttons within .calendar-navigation (unchanged) */
-.calendar-navigation button {
-    /* Original button colors */
-    background-color: #2b7cff; /* Keep the original blue color */
-    color: #fff; /* Keep white text */
-
-    /* Reduced padding for a smaller button size */
-    padding: 0.3rem 0.6rem;
-    /* Slightly smaller font size for the button text */
-    font-size: 0.9rem;
-
-    border: none;
-    border-radius: 6px; /* Keep original border-radius */
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
-    font-weight: bold;
-}
-
-.calendar-navigation button:hover {
-    background-color: #1a5fd1; /* Keep the original hover color */
-    transform: translateY(-1px); /* Keep subtle lift effect */
-}
-
-.calendar-navigation button:active {
-    background-color: #1a5fd1; /* Use the same hover color for active, or you can define a slightly darker one */
-    transform: translateY(0); /* Reset lift on click */
-}
-
-/* Optional: To make the calendar header (month/year) take up the central space (unchanged) */
-.calendar-navigation .calendar-header {
-    flex-grow: 1; /* Allows the header to take up available space */
-    text-align: center; /* Center the month/year text */
-}
-.calendar-navigation button {
-    background-color: transparent;
-    color: #2b7cff;
-    border: none;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    font-size: 1.1rem;
-    font-weight: bold;
-    padding: 0;
-}
-
-/* Doctor Info Section */
-.doctor-info {
-    display: flex;
-    flex-direction: column; /* Keeps the profile and description stacked */
-    background-color: #f9f9f9;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
-  }
-
-  .doctor-profile {
-    display: flex;
-    gap: 20px; /* Increased gap for better separation */
-    align-items: flex-start; /* Align items to the start of the cross axis (top) */
-    /* To ensure the text next to the image starts from the far left */
-    width: 100%; /* Ensure it takes full width to properly align children */
-  }
-
-  .doctor-photo {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #c1cada;
-    flex-shrink: 0; /* Prevent the image from shrinking */
-  }
-
-  .doctor-details {
-    display: flex;
-    flex-direction: column; /* Stack items vertically */
-    justify-content: flex-start; /* Align content to the top */
-    flex: 1; /* Allow it to take available space */
-    text-align: left; /* Ensure all text within doctor-details aligns left */
-  }
-
-  .doctor-name {
-    margin: 0;
-    font-size: 1.5rem;
-    color: #2b7cff;
-    font-weight: 600;
-    text-align: left; /* Explicitly align name to the left */
-  }
-
-  .doctor-details-row { /* Container for specialty, rating, experience */
-    display: flex;
-    flex-direction: column; /* Stack these details vertically */
-    align-items: flex-start; /* Crucially, align items to the left */
-    margin-top: 6px; /* Small space below the name */
-  }
-
-  .doctor-specialty,
-  .doctor-rating,
-  .doctor-experience {
-    margin: 0; /* Remove default margins to control spacing with parent flex container */
-    font-size: 1rem;
-    color: #555;
-    line-height: 1.4; /* Adjust line height for better readability */
-    text-align: left; /* Ensure these texts are aligned left */
-  }
-
-  .doctor-rating .stars {
-    color: #f39c12;
-    margin-right: 10px;
-  }
-
-  .doctor-description {
-    margin-top: 1rem;
-    font-size: 0.95rem;
-    color: #333;
-    line-height: 1.5; /* Increased line height for readability */
-    text-align: left; /* Align description text to the left */
-  }
-
-  .calendar-day.disabled {
-    color: #ccc;
-    pointer-events: none;
-    background-color: #f0f0f0;
-  }
-  /* Message box container */
-.message-box {
-  margin-top: 20px;
-  padding: 12px 20px;
-  border-radius: 6px;
-  font-weight: bold;
-  text-align: center;
-  font-size: 16px;
-  width: 100%;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-  animation: fadeInSlide 0.3s ease-in-out;
-}
-
-/* Success styling */
-.message-box.success {
-  background-color: #e6f4ea;
-  color: #256029;
-  border: 1px solid #b7e0c2;
-}
-
-/* Error styling */
-.message-box.error {
-  background-color: #fdecea;
-  color: #a94442;
-  border: 1px solid #f5c6cb;
-}
-
-/* Optional fade/slide animation */
-@keyframes fadeInSlide {
-  0% {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-/* Loader wrapper */
-.loader-wrapper {
+.booking-page {
+  background-color: #f8fafc;
+  min-height: calc(100vh - 80px);
+  padding: 60px 24px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  padding: 80px 0;
-  color: #333;
+}
+
+.booking-container {
+  max-width: 1100px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+/* Sidebar Summary */
+.summary-card {
+  background: white;
+  padding: 30px;
+  border-radius: 32px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  position: sticky;
+  top: 120px;
+}
+
+.summary-header {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 24px;
+  align-items: center;
+}
+
+.summary-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  object-fit: cover;
+  background: #f1f5f9;
+}
+
+.status-indicator {
+  font-size: 11px;
+  background: #f0fdf4;
+  color: #10b981;
+  padding: 4px 10px;
+  border-radius: 50px;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+.summary-titles h3 {
+  font-size: 20px;
+  color: #0f172a;
+  margin: 0;
+}
+
+.specialty-label {
+  color: #4f46e5;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 20px 0;
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 24px;
+}
+
+.s-stat { text-align: center; }
+.s-label { font-size: 11px; color: #94a3b8; font-weight: 700; display: block; text-transform: uppercase; }
+.s-value { font-size: 16px; font-weight: 800; color: #0f172a; }
+
+.price-breakdown { display: flex; flex-direction: column; gap: 15px; }
+.price-item { display: flex; justify-content: space-between; font-size: 14px; color: #64748b; font-weight: 500; }
+.price-bold { color: #0f172a; font-weight: 700; }
+.price-item.total { padding-top: 15px; border-top: 1px dashed #e2e8f0; margin-top: 5px; }
+.price-grand { font-size: 24px; font-weight: 850; color: #4f46e5; }
+
+/* Main Form */
+.booking-form-main {
+  background: white;
+  padding: 50px;
+  border-radius: 40px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.form-header { margin-bottom: 40px; }
+.form-header h2 { font-size: 32px; font-weight: 850; letter-spacing: -1px; color: #0f172a; }
+.form-header p { color: #64748b; font-weight: 500; }
+
+.form-section { margin-bottom: 40px; }
+.section-title { font-size: 18px; font-weight: 800; color: #0f172a; display: block; margin-bottom: 20px; padding-left: 15px; border-left: 4px solid #4f46e5; }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+.input-group { display: flex; flex-direction: column; gap: 8px; }
+.input-group label { font-size: 14px; font-weight: 700; color: #475569; }
+.input-group input, .input-group select {
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  font-size: 15px;
+  color: #1e293b;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.input-group input:focus { outline: none; border-color: #4f46e5; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+
+/* Type Selector Buttons */
+.type-selector { display: flex; gap: 16px; margin-bottom: 24px; }
+.type-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 18px;
+  border-radius: 18px;
+  border: 2px solid #f1f5f9;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.type-btn .icon { font-size: 24px; }
+.type-btn .text strong { display: block; font-size: 16px; color: #0f172a; }
+.type-btn .text span { font-size: 12px; color: #94a3b8; }
+
+.type-btn.active { border-color: #4f46e5; background: #f5f3ff; }
+.type-btn.active .text strong { color: #4f46e5; }
+
+.submit-booking-btn {
+  width: 100%;
+  padding: 18px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 18px;
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
 }
 
-/* Spinner */
-.spinner {
-  width: 50px;
-  height: 50px;
-  margin-bottom: 15px;
-  border: 6px solid #eee;
-  border-top: 6px solid #4CAF50; /* Green spinner top */
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
+.submit-booking-btn:hover { background: #4338ca; transform: translateY(-2px); }
+.submit-booking-btn:disabled { background: #94a3b8; cursor: not-allowed; box-shadow: none; }
 
-/* Spin animation */
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+.loader-container { height: 100vh; display: flex; align-items: center; justify-content: center; }
+.loader { border: 4px solid #f3f3f3; border-top: 4px solid #4f46e5; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+@media (max-width: 900px) {
+  .booking-container { grid-template-columns: 1fr; }
+  .doctor-summary-aside { order: 2; }
+  .booking-form-main { order: 1; padding: 30px; }
+  .form-grid { grid-template-columns: 1fr; }
 }

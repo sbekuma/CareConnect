@@ -1,95 +1,117 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { ENDPOINTS } from "../../apiConfig";
 import "./Login.css";
 
-// ===================== Add task 18 imports here =====================
-
-function Login({ setIsLoggedIn }) {
-  // State for form fields and error handling
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const Login = ({ setIsLoggedIn }) => {
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  //  On component mount: Redirect if already logged in
-  useEffect(() => {
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    if (isLoggedIn) {
-      navigate("/"); // Redirect to homepage if already logged in
-    }
-  }, [navigate]);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (error) setError(""); // Clear error when user types
+  };
 
-  //  Handles form submission and sends login request to backend
-  const handleLogin = async (e) => {
-    e.preventDefault(); // Prevent default form behavior
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
     try {
-      const res = await axios.post("/login", {
-        email,
-        password,
-      });
-
-      //  On successful login: store session and navigate
+      // Use the live endpoint instead of localhost
+      const res = await axios.post(ENDPOINTS.LOGIN, formData);
+      
       if (res.data.success) {
-        localStorage.setItem("isLoggedIn", "true"); // Save login state
-        localStorage.setItem("userId", res.data.userId); // Save user ID
-        setIsLoggedIn(true); // Update parent state
-        navigate("/"); // Redirect to homepage
+        // Store auth data in localStorage
+        localStorage.setItem("userId", res.data.userId);
+        localStorage.setItem("isLoggedIn", "true");
+        
+        setIsLoggedIn(true);
+        navigate("/");
       }
     } catch (err) {
-      //  Handle failed login
-      if (err.response?.status === 401) {
-        setError("Invalid email or password");
-      } else {
-        setError("Something went wrong. Please try again later.");
-      }
+      setError(err.response?.data?.message || "Invalid email or password. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="container">
-      <div className="form-box">
-        <h2>Login</h2>
-
-        {/*  Login form */}
-        <form onSubmit={handleLogin}>
-          <input
-            type="email"
-            placeholder="Email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)} // Update email state
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)} // Update password state
-          />
-          <button type="submit">Login</button>
-
-          {/*  Error message display */}
-          {error && (
-            <div className="error-msg">
-              <span>{error}</span>
-              <span className="close-btn" onClick={() => setError("")}>×</span>
+    <div className="login-page">
+      <div className="login-container">
+        <div className="login-card">
+          <header className="login-header">
+            <div className="login-logo-preview">
+              <div className="logo-dot-inner"></div>
             </div>
-          )}
+            <h1>Welcome Back</h1>
+            <p>Enter your credentials to access your CareConnect account.</p>
+          </header>
 
-          {/* Static UI element for password reset (not functional) */}
-          <p className="forgot-password">Forgot Password?</p>
-        </form>
+          <form className="login-form" onSubmit={handleSubmit}>
+            {error && (
+              <div className="login-error-message">
+                <span className="error-icon">⚠️</span>
+                {error}
+              </div>
+            )}
 
-        {/*  Signup redirect */}
-        <p>
-          Don't have an account? <a href="/signup">Sign Up</a>
-        </p>
+            <div className="form-input-group">
+              <label htmlFor="email">Email Address</label>
+              <div className="input-wrapper">
+                <span className="input-icon">✉️</span>
+                <input
+                  id="email"
+                  type="email"
+                  name="email"
+                  placeholder="name@example.com"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div className="form-input-group">
+              <div className="label-row">
+                <label htmlFor="password">Password</label>
+                <Link to="/forgot-password" title="Coming soon" className="forgot-link">Forgot password?</Link>
+              </div>
+              <div className="input-wrapper">
+                <span className="input-icon">🔒</span>
+                <input
+                  id="password"
+                  type="password"
+                  name="password"
+                  placeholder="••••••••"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <button type="submit" className="login-submit-btn" disabled={loading}>
+              {loading ? <span className="loader-small"></span> : "Sign In to Account"}
+            </button>
+          </form>
+
+          <footer className="login-footer">
+            <p>
+              Don't have an account? <Link to="/signup">Create an account</Link>
+            </p>
+          </footer>
+        </div>
+        
+        <div className="login-help-text">
+          <p>By signing in, you agree to our <strong>Terms of Service</strong> and <strong>Privacy Policy</strong>.</p>
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default Login;
