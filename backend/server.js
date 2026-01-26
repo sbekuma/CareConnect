@@ -56,7 +56,11 @@ const chatModel = new ChatGoogleGenerativeAI({
 });
 
 // ===================== Root Route ===================== 
-// This fixes the "Cannot GET /" error on the main Render URL
+// Ultra-lightweight route for cron-job.org
+app.get("/ping", (req, res) => {
+  res.status(200).send("pong");
+});
+
 app.get("/", (req, res) => {
   res.send("CareConnect Backend API is running successfully!");
 });
