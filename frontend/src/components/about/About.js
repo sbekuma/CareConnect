@@ -51,8 +51,8 @@ const About = () => {
           <div className="dev-content">
             <div className="dev-info">
               <span className="dev-badge">Lead Developer</span>
-              <h2>Your Name</h2>
-              <p>Passionate Full Stack Developer dedicated to building accessible healthcare solutions for the East Coast community.</p>
+              <h2>Sami Bekuma</h2>
+              <p>Passionate Machine Learning and Full Stack Developer dedicated to building accessible healthcare solutions for the community.</p>
               
               <div className="dev-socials">
                 <a href="https://www.linkedin.com/in/samibekuma" target="_blank" rel="noopener noreferrer" className="social-link linkedin">
