@@ -1,113 +1,118 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useNavigate, Link } from "react-router-dom";
+import { ENDPOINTS } from "../../apiConfig";
 import "./Signup.css";
 
-// ===================== Add task 20 imports here =====================
-
-function Signup() {
+const Signup = () => {
   const [formData, setFormData] = useState({
     username: "",
-    password: "",
-    dob: "",
     email: "",
+    password: "",
+    dob: ""
   });
-
-  const [statusMessage, setStatusMessage] = useState("");
-  const [isSuccess, setIsSuccess] = useState(null);
-
-  const navigate = useNavigate(); //hook
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (error) setError("");
   };
 
-  const handleSubmit = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
 
     try {
-      const res = await axios.post("/signup", formData);
-
-      if (res.status === 201) {
-        setStatusMessage("Signup successful!");
-        setIsSuccess(true);
-        setFormData({ username: "", password: "", dob: "", email: "" });
-
-        // Redirect after 2 seconds
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
-      } else {
-        setStatusMessage("Signup failed. Please try again.");
-        setIsSuccess(false);
+      // Use the ENDPOINTS helper which points to Render, not Vercel
+      const response = await axios.post(ENDPOINTS.SIGNUP, formData);
+      
+      if (response.status === 201 || response.data.success) {
+        navigate("/login");
       }
     } catch (err) {
-      setStatusMessage(
-        "Signup failed: " + (err.response?.data?.error || err.message)
-      );
-      setIsSuccess(false);
+      console.error("Signup error:", err);
+      setError(err.response?.data?.error || "Failed to create account. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="container">
-      <div className="form-box">
-        <h2>Sign Up</h2>
+    <div className="signup-page">
+      <div className="signup-container">
+        <div className="signup-card">
+          <header className="signup-header">
+            <div className="signup-logo-preview">
+              <div className="logo-dot-inner"></div>
+            </div>
+            <h1>Create Account</h1>
+            <p>Join CareConnect to manage your healthcare journey.</p>
+          </header>
 
-        {statusMessage && (
-          <div className={`message ${isSuccess ? "success" : "error"}`}>
-            <span className="close-btn" onClick={() => setStatusMessage("")}>×</span>
-            {statusMessage}
-          </div>
-        )}
+          <form onSubmit={handleSignup} className="signup-form">
+            {error && <div className="error-message">⚠️ {error}</div>}
+            
+            <div className="form-input-group">
+              <label>Full Name</label>
+              <input 
+                name="username" 
+                placeholder="John Doe" 
+                value={formData.username}
+                onChange={handleChange} 
+                required 
+              />
+            </div>
 
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          <label htmlFor="dob">Date of Birth</label>
-          <input
-            type="date"
-            id="dob"
-            name="dob"
-            className="custom-date"
-            value={formData.dob}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-          <button type="submit">Sign Up</button>
-        </form>
+            <div className="form-input-group">
+              <label>Email Address</label>
+              <input 
+                name="email" 
+                type="email" 
+                placeholder="name@example.com" 
+                value={formData.email}
+                onChange={handleChange} 
+                required 
+              />
+            </div>
 
-        <p>
-          Already have an account? <Link to="/login">Login</Link>
-        </p>
+            <div className="form-input-group">
+              <label>Password</label>
+              <input 
+                name="password" 
+                type="password" 
+                placeholder="••••••••" 
+                value={formData.password}
+                onChange={handleChange} 
+                required 
+              />
+            </div>
+
+            <div className="form-input-group">
+              <label>Date of Birth</label>
+              <input 
+                name="dob" 
+                type="date" 
+                value={formData.dob}
+                onChange={handleChange} 
+                required 
+              />
+            </div>
+
+            <button type="submit" className="signup-submit-btn" disabled={loading}>
+              {loading ? "Creating Account..." : "Register Now"}
+            </button>
+          </form>
+
+          <footer className="signup-footer">
+            <p>Already have an account? <Link to="/login">Sign in</Link></p>
+          </footer>
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default Signup;
